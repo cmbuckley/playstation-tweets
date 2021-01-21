@@ -1,0 +1,14 @@
+{
+  "name": "playstation-tweets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/webhook": "^6.0.0",
+    "dotenv": "^8.2.0",
+    "fetch-timeline": "github:kikobeats/fetch-timeline#master"
+  }
+}
