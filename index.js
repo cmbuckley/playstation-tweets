@@ -38,7 +38,10 @@ stream.on('data', (tweet, index) => {
         tweet.extended_entities.media.forEach((media) => {
             if (media.type == 'video') {
                 // get max bitrate video
-                let videoUrl =  media.video_info.variants.sort((a, b) => b.bitrate > a.bitrate)[0].url;
+                let videoUrl =  media.video_info.variants
+                    .filter(v => v.content_type == 'video/mp4')
+                    .sort((a, b) => b.bitrate > a.bitrate)[0].url;
+
                 console.log(`Found video: ${videoUrl}`);
 
                 webhook.send({
