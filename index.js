@@ -26,6 +26,8 @@ const opts = {
 // @todo failsafe if file not found
 const seenFile = './seen.txt';
 const seen = fs.readFileSync(seenFile, 'utf-8').split('\n').filter(Boolean).map(n => parseInt(n, 10));
+let seenNew = false;
+
 const stream = fetchTimeline(params, opts);
 
 stream.on('data', (tweet, index) => {
@@ -33,6 +35,7 @@ stream.on('data', (tweet, index) => {
     if (!seen.includes(tweet.id) && tweet.extended_entities.media) {
         console.log(`New tweet ${tweet.id}`);
         seen.push(tweet.id);
+        seenNew = true;
 
         // loop through all media
         tweet.extended_entities.media.forEach((media) => {
@@ -53,6 +56,8 @@ stream.on('data', (tweet, index) => {
 });
 
 stream.on('info', () => {
-    console.log('Saving list of tweets seen so far');
-    fs.writeFileSync(seenFile, seen.join('\n'));
+    if (seenNew) {
+        console.log('Saving list of tweets seen so far');
+        fs.writeFileSync(seenFile, seen.join('\n'));
+    }
 });
