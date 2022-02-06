@@ -1,9 +1,12 @@
 const fs = require('fs');
+const https = require('https');
 const fetchTimeline = require('fetch-timeline');
-const { IncomingWebhook } = require('@slack/webhook');
+const { WebClient } = require('@slack/web-api');
 
 require('dotenv').config();
-const webhook = new IncomingWebhook(process.env.SLACK_URL);
+
+const token = process.env.SLACK_TOKEN;
+const slack = new WebClient(token);
 
 const params = {
     screenName: process.env.TWITTER_ACCOUNT,
@@ -46,9 +49,18 @@ stream.on('data', (tweet, index) => {
                     .sort((a, b) => b.bitrate > a.bitrate)[0].url;
 
                 console.log(`Found video: ${videoUrl}`);
+                https.get(videoUrl, (res) => {
+                    const data = [];
+                    res.on('data', c => data.push(c));
 
-                webhook.send({
-                    text: videoUrl,
+                    res.on('end', async () => {
+                        console.log('Uploading video to Slack');
+                        await slack.files.upload({
+                            file:     Buffer.concat(data),
+                            filename: 'video.mp4',
+                            channels: process.env.SLACK_CHANNEL,
+                        });
+                    });
                 });
             }
         });
