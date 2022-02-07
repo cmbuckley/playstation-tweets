@@ -26,7 +26,7 @@ const opts = {
     limitDays: 7
 };
 
-const seenFile = './seen.txt';
+const seenFile = __dirname + '/seen.txt';
 const seen = fs.readFileSync(seenFile, {
     encoding: 'utf-8',
     flag: 'a+',
