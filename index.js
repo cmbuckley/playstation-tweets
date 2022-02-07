@@ -35,6 +35,33 @@ let seenNew = false;
 
 const stream = fetchTimeline(params, opts);
 
+function linkify(text, item, link) {
+    return text.slice(0, item.indices[0]) + (link || '') + text.slice(item.indices[1]);
+}
+
+// replace hashtags and urls in the tweet text with the extended form
+// also removes media links (for a video tweet this is a preview image)
+function tweetText(tweet) {
+    let entities = [];
+
+    ['hashtags', 'urls', 'media'].forEach(type => {
+        tweet.entities[type].forEach(entity => {
+            entities.push({
+                index: entity.indices[0],
+                entity, type
+            });
+        });
+    });
+
+    // replace latest entity first to maintain earlier indices
+    return entities.sort((a, b) => b.index - a.index).reduce((text, {entity, type}) => {
+        return linkify(text, entity, {
+            hashtags: `<https://twitter.com/hashtag/${entity.text}|#${entity.text}>`,
+            urls:     `<${entity.expanded_url}|${entity.display_url}>`,
+        }[type]);
+    }, tweet.text);
+}
+
 stream.on('data', (tweet, index) => {
     // only care about new tweets with attached media
     if (!seen.includes(tweet.id) && tweet.extended_entities.media) {
@@ -57,10 +84,12 @@ stream.on('data', (tweet, index) => {
 
                     res.on('end', async () => {
                         console.log('Uploading video to Slack');
+
                         await slack.files.upload({
-                            file:     Buffer.concat(data),
-                            filename: 'video.mp4',
-                            channels: process.env.SLACK_CHANNEL,
+                            file:            Buffer.concat(data),
+                            filename:        'video.mp4',
+                            channels:        process.env.SLACK_CHANNEL,
+                            initial_comment: tweetText(tweet),
                         });
                     });
                 });
