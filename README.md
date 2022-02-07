@@ -2,6 +2,8 @@
 
 Grab videos from a private Twitter account and share them on Slack.
 
+Because this accesses a private account, the Twitter stream cannot be used, but instead it can poll the [user_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-user_timeline) API every 5 seconds.
+
 ## API Keys
 
 Credentials should be placed in a `.env` file or in the environment as normal.
@@ -18,5 +20,5 @@ Sign up for the developer account and create a project here: https://developer.t
 
 ### Slack
 
-* `SLACK_TOKEN` - e.g. `'xoxb-XXX`
+* `SLACK_TOKEN` - e.g. `'xoxb-XXX'`
 * `SLACK_CHANNEL` - the bot must be a member of this channel
