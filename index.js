@@ -26,9 +26,11 @@ const opts = {
     limitDays: 7
 };
 
-// @todo failsafe if file not found
 const seenFile = './seen.txt';
-const seen = fs.readFileSync(seenFile, 'utf-8').split('\n').filter(Boolean).map(n => parseInt(n, 10));
+const seen = fs.readFileSync(seenFile, {
+    encoding: 'utf-8',
+    flag: 'a+',
+}).split('\n').filter(Boolean).map(n => parseInt(n, 10));
 let seenNew = false;
 
 const stream = fetchTimeline(params, opts);
