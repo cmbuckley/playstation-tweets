@@ -60,11 +60,12 @@ function tweetText(tweet) {
     }, tweet.text);
 }
 
+console.log('Initialising fetch loop');
+
 setInterval(() => {
-    const stream = fetchTimeline(params, opts);
     let seenNew = false;
 
-    stream.on('data', tweet => {
+    fetchTimeline(params, opts).on('data', tweet => {
         // only care about new tweets with attached media
         if (!seen.includes(tweet.id)) {
             console.log(`New tweet ${tweet.id}`);
@@ -102,9 +103,7 @@ setInterval(() => {
                 });
             }
         }
-    });
-
-    stream.on('info', () => {
+    }).on('info', () => {
         if (seenNew) {
             console.log('Saving list of tweets seen so far');
             fs.writeFileSync(seenFile, seen.join('\n'));
