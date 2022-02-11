@@ -108,5 +108,7 @@ setInterval(() => {
             console.log('Saving list of tweets seen so far');
             fs.writeFileSync(seenFile, seen.join('\n'));
         }
+    }).on('error', (e) => {
+        console.error('Fetch timeline error: ' + e);
     });
 }, 5000);
