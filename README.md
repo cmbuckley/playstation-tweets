@@ -1,6 +1,6 @@
 # PlayStation Tweets
 
-Grab videos from a private Twitter account and share them on Slack.
+Grab photos/videos from a private Twitter account and share them on Slack.
 
 Because this accesses a private account, the Twitter stream cannot be used, but instead it can poll the [user_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-user_timeline) API every 5 seconds.
 

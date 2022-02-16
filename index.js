@@ -1,5 +1,6 @@
 const fs = require('fs');
 const https = require('https');
+const path = require('path');
 const fetchTimeline = require('fetch-timeline');
 const { WebClient } = require('@slack/web-api');
 
@@ -60,6 +61,19 @@ function tweetText(tweet) {
     }, tweet.text);
 }
 
+function getMediaUrl(media) {
+    if (media.type == 'video') {
+        // get max bitrate video
+        return media.video_info.variants
+            .filter(v => v.content_type == 'video/mp4')
+            .sort((a, b) => b.bitrate > a.bitrate)[0].url;
+    }
+
+    if (media.type == 'photo') {
+        return media.media_url_https;
+    }
+}
+
 console.log('Initialising fetch loop');
 
 setInterval(() => {
@@ -73,27 +87,25 @@ setInterval(() => {
             seenNew = true;
 
             if (tweet.extended_entities && tweet.extended_entities.media) {
-                console.log('Tweet contains media; checking for videos');
+                console.log('Tweet contains media');
 
                 // loop through all media
                 tweet.extended_entities.media.forEach(media => {
-                    if (media.type == 'video') {
-                        // get max bitrate video
-                        let videoUrl =  media.video_info.variants
-                            .filter(v => v.content_type == 'video/mp4')
-                            .sort((a, b) => b.bitrate > a.bitrate)[0].url;
+                    const url = getMediaUrl(media);
 
-                        console.log(`Found video: ${videoUrl}`);
-                        https.get(videoUrl, (res) => {
+                    if (url) {
+                        console.log(`Found ${media.type}: ${url}`);
+
+                        https.get(url, res => {
                             const data = [];
                             res.on('data', c => data.push(c));
 
                             res.on('end', async () => {
-                                console.log('Uploading video to Slack');
+                                console.log(`Uploading ${media.type} to Slack`);
 
                                 await slack.files.upload({
                                     file:            Buffer.concat(data),
-                                    filename:        'video.mp4',
+                                    filename:        path.basename(new URL(url).pathname),
                                     channels:        process.env.SLACK_CHANNEL,
                                     initial_comment: tweetText(tweet),
                                 });
