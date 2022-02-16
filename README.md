@@ -2,7 +2,7 @@
 
 Grab photos/videos from a private Twitter account and share them on Slack.
 
-Because this accesses a private account, the Twitter stream cannot be used, but instead it can poll the [user_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-user_timeline) API every 5 seconds.
+Because this accesses a private account, the Twitter stream cannot be used, but instead it can poll the [user_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-user_timeline) API every 5 seconds, which is 180 requests in 15 min or 17,280 in 24 hours; well within the request limits.
 
 ## API Keys
 
