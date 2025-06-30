@@ -8,7 +8,7 @@
   "license": "ISC",
   "dependencies": {
     "@slack/web-api": "^7.0.0",
-    "dotenv": "^16.0.1",
+    "dotenv": "^17.0.0",
     "fetch-timeline": "github:kikobeats/fetch-timeline#master"
   }
 }
