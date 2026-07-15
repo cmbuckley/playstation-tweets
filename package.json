@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@slack/web-api": "^7.0.0",
+    "@slack/web-api": "^8.0.0",
     "dotenv": "^17.0.0",
     "fetch-timeline": "github:kikobeats/fetch-timeline#master"
   }
